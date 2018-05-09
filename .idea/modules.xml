@@ -3,9 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/PastilleroApp.iml" filepath="$PROJECT_DIR$/PastilleroApp.iml" />
-      <module fileurl="file://C:\EspacioProyectos\ProyectosAndroid\PastilleroApp\PastilleroApp.iml" filepath="C:\EspacioProyectos\ProyectosAndroid\PastilleroApp\PastilleroApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://C:\EspacioProyectos\ProyectosAndroid\PastilleroApp\app\app.iml" filepath="C:\EspacioProyectos\ProyectosAndroid\PastilleroApp\app\app.iml" />
     </modules>
   </component>
 </project>
