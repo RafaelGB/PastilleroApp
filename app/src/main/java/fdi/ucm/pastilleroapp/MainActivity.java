@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View v, final int position, long id) {
                 long viewId = v.getId();
                 int pos = parent.getPositionForView(v);
 
@@ -67,6 +67,21 @@ public class MainActivity extends AppCompatActivity {
                     popup.getMenuInflater().inflate(R.menu.menu_popup, popup.getMenu());
 
                     popup.show();
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+                                case R.id.editar:
+                                    Toast.makeText(getApplicationContext(),"Editar " + position,Toast.LENGTH_SHORT).show();
+                                    return true;
+                                case R.id.eliminar:
+                                    Toast.makeText(getApplicationContext(),"Eliminar " + position,Toast.LENGTH_SHORT).show();
+                                    return true;
+
+                                 default: return true;
+                            }
+                        }
+                    });
                 } else {
                     Toast.makeText(getApplicationContext(),"ListView " + pos,Toast.LENGTH_SHORT).show();
                 }
@@ -101,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         if(item.getItemId() == R.id.agregador) {
             adapter.notifyDataSetChanged();
             return true;
