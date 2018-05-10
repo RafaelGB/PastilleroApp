@@ -3,9 +3,9 @@ package fdi.ucm.pastilleroapp;
 public class Medicina {
 
     private String nombre;
-    private double cantidad;
+    private int cantidad;
 
-    public Medicina(String nombre, double cantidad) {
+    public Medicina(String nombre, int cantidad) {
         this.nombre = nombre;
         this.cantidad = cantidad;
     }
@@ -18,11 +18,11 @@ public class Medicina {
         this.nombre = nombre;
     }
 
-    public double getCantidad() {
+    public int getCantidad() {
         return cantidad;
     }
 
-    public void setCantidad(double cantidad) {
+    public void setCantidad(int cantidad) {
         this.cantidad = cantidad;
     }
 }

@@ -4,6 +4,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -51,11 +52,31 @@ public class MainActivity extends AppCompatActivity {
 
         adapter = new RecetaListAdapter(this, R.layout.adapter_view_layout, listaRecetas);
         listView.setAdapter(adapter);
+        //listView.setSaveEnabled(true);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                System.out.println("Hola");
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                long viewId = v.getId();
+                int pos = parent.getPositionForView(v);
+
+                if (viewId == R.id.imageButton) {
+                    Toast.makeText(getApplicationContext(),"Button " + pos,Toast.LENGTH_SHORT).show();
+
+                    PopupMenu popup =new PopupMenu(MainActivity.this, v);
+                    popup.getMenuInflater().inflate(R.menu.menu_popup, popup.getMenu());
+
+                    popup.show();
+                } else {
+                    Toast.makeText(getApplicationContext(),"ListView " + pos,Toast.LENGTH_SHORT).show();
+                }
+                /*int pos = parent.getPositionForView(v);
+                Toast.makeText(getApplicationContext(),pos+" ",Toast.LENGTH_SHORT).show();
+
+                PopupMenu popup =new PopupMenu(MainActivity.this, v);
+                popup.getMenuInflater().inflate(R.menu.menu_popup, popup.getMenu());
+
+                popup.show();*/
             }
         });
 
@@ -69,12 +90,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_tareas, menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -7,8 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 
 import java.util.ArrayList;
@@ -28,7 +31,7 @@ public class RecetaListAdapter extends ArrayAdapter<Receta> {
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+    public View getView(final int position, @Nullable View convertView, @NonNull final ViewGroup parent) {
 
         String nombre = getItem(position).getNombre();
         ArrayList<Medicina> lista_medicina = getItem(position).getArray_receta();
@@ -50,7 +53,17 @@ public class RecetaListAdapter extends ArrayAdapter<Receta> {
             Medicina medicina2 = lista_medicina.get(1);
             tvmedicina2.setText(medicina2.getNombre() + " - " + medicina2.getCantidad());
         } else tvmedicina2.setText("");
-        
+
+
+        ImageButton img_button = (ImageButton) convertView.findViewById(R.id.imageButton);
+        img_button.setClickable(true);
+        img_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //performItemClick method calls the OnItemClickListener if it is defined.
+                ((ListView)parent).performItemClick(v,position,0);
+            }
+        });
 
         return convertView;
     }
