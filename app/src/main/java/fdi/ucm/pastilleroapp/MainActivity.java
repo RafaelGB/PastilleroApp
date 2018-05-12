@@ -1,5 +1,6 @@
 package fdi.ucm.pastilleroapp;
 
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,6 +23,8 @@ import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
+
     private ListView listView;
     private FloatingActionButton botonFlotante;
 
@@ -33,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
+        Log.d(TAG, "onCreate: Starting");
 
         listaMedicinas = new ArrayList<>();
         listaMedicinas.add(new Medicina("Paracetamol",500));
@@ -117,11 +121,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        if(item.getItemId() == R.id.agregador) {
-            adapter.notifyDataSetChanged();
-            return true;
+        switch (item.getItemId()) {
+            case R.id.agregador: {
+                Log.d(TAG, "onOptionsItemSelected: ClickBtnEdit");
+                Intent intent = new Intent(MainActivity.this, EdicionActivity.class);
+                startActivity(intent);
+                adapter.notifyDataSetChanged();
+                return true;
+            }
+            case R.id.farmacias: {
+                Log.d(TAG, "onOptionsItemSelected: ClickFarmacias");
+                Toast.makeText(getApplicationContext(),"Farmacias",Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            default: return true;
         }
-        else return false;
+
     }
 
 }

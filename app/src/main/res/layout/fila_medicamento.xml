@@ -14,7 +14,7 @@
         >
 
         <EditText
-            android:id="@+id/editText4"
+            android:id="@+id/editTextCant"
             android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content">
 
         <EditText
-            android:id="@+id/editText5"
+            android:id="@+id/editTextMed"
             android:layout_width="233dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
