@@ -77,13 +77,15 @@ public class MainActivity extends AppCompatActivity {
                             switch (item.getItemId()) {
                                 case R.id.editar:
                                     Toast.makeText(getApplicationContext(),"Editar " + position,Toast.LENGTH_SHORT).show();
-                                    return true;
+                                    break;
                                 case R.id.eliminar:
+                                    eliminar_receta(position);
                                     Toast.makeText(getApplicationContext(),"Eliminar " + position,Toast.LENGTH_SHORT).show();
-                                    return true;
-
-                                 default: return true;
+                                    break;
                             }
+
+                            adapter.notifyDataSetChanged();
+                            return true;
                         }
                     });
                 } else {
@@ -110,6 +112,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public void add_receta(Receta receta) {
+        listaRecetas.add(receta);
+    }
+
+    public void eliminar_receta(int posicion) {
+        listaRecetas.remove(posicion);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -125,8 +135,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.agregador: {
                 Log.d(TAG, "onOptionsItemSelected: ClickBtnEdit");
                 Intent intent = new Intent(MainActivity.this, EdicionActivity.class);
-                startActivity(intent);
-                adapter.notifyDataSetChanged();
+                startActivityForResult(intent,999);
                 return true;
             }
             case R.id.farmacias: {
@@ -139,4 +148,26 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 999 && resultCode == RESULT_OK) {
+            Receta receta = data.getParcelableExtra("Receta");
+            add_receta(receta);
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+
 }
+
+
+
+
+
+
+
+
+
+
+

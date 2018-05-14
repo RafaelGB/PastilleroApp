@@ -50,7 +50,8 @@
         android:layout_gravity="center_horizontal"
         >
 
-        <TableRow>
+        <TableRow
+            android:id="@+id/fila_check">
             <CheckBox
                 android:id="@+id/checkBLunes"
                 android:layout_width="wrap_content"
