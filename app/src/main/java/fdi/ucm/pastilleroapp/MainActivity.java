@@ -38,19 +38,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_menu);
         Log.d(TAG, "onCreate: Starting");
 
-        listaMedicinas = new ArrayList<>();
-        listaMedicinas.add(new Medicina("Paracetamol",500));
-        listaMedicinas.add(new Medicina("Ibuprofeno",200));
-        listaMedicinas.add(new Medicina("Ilvico",300));
-        listaMedicinas.add(new Medicina("Citilsteina",100));
-        listaMedicinas.add(new Medicina("Paranina",1000));
-        listaMedicinas.add(new Medicina("Dalsi",700));
-
         listaRecetas = new ArrayList<>();
-        listaRecetas.add(new Receta("Receta 1",listaMedicinas));
-        listaRecetas.add(new Receta("Receta 2",listaMedicinas));
-        listaRecetas.add(new Receta("Receta 3",listaMedicinas));
-        listaRecetas.add(new Receta("Receta 4",listaMedicinas));
 
         listView = (ListView) findViewById(R.id.listaTareas);
 
@@ -77,6 +65,11 @@ public class MainActivity extends AppCompatActivity {
                             switch (item.getItemId()) {
                                 case R.id.editar:
                                     Toast.makeText(getApplicationContext(),"Editar " + position,Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(MainActivity.this, EdicionActivity.class);
+                                    intent.putExtra("Intencion", "Editar");
+                                    intent.putExtra("Posicion", position);
+                                    intent.putExtra("Receta Editar", listaRecetas.get(position));
+                                    startActivityForResult(intent,666);
                                     break;
                                 case R.id.eliminar:
                                     eliminar_receta(position);
@@ -91,26 +84,11 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(getApplicationContext(),"ListView " + pos,Toast.LENGTH_SHORT).show();
                 }
-                /*int pos = parent.getPositionForView(v);
-                Toast.makeText(getApplicationContext(),pos+" ",Toast.LENGTH_SHORT).show();
 
-                PopupMenu popup =new PopupMenu(MainActivity.this, v);
-                popup.getMenuInflater().inflate(R.menu.menu_popup, popup.getMenu());
-
-                popup.show();*/
             }
         });
 
-       /* botonFlotante = (FloatingActionButton) findViewById(R.id.boton_agregarTarea);
-        botonFlotante.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                adapter.notifyDataSetChanged();
-            }
-        });*/
-
     }
-
 
     public void add_receta(Receta receta) {
         listaRecetas.add(receta);
@@ -118,6 +96,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void eliminar_receta(int posicion) {
         listaRecetas.remove(posicion);
+    }
+
+    public void edit_receta(Receta receta, int posicion) {
+        listaRecetas.set(posicion, receta);
     }
 
     @Override
@@ -135,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.agregador: {
                 Log.d(TAG, "onOptionsItemSelected: ClickBtnEdit");
                 Intent intent = new Intent(MainActivity.this, EdicionActivity.class);
+                intent.putExtra("Intencion", "Crear");
                 startActivityForResult(intent,999);
                 return true;
             }
@@ -154,8 +137,15 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == 999 && resultCode == RESULT_OK) {
             Receta receta = data.getParcelableExtra("Receta");
             add_receta(receta);
-            adapter.notifyDataSetChanged();
         }
+
+        if(requestCode == 666 && resultCode == RESULT_OK) {
+            Receta receta = data.getParcelableExtra("Receta");
+            int posicion = data.getIntExtra("Posicion",0);
+            edit_receta(receta, posicion);
+        }
+
+        adapter.notifyDataSetChanged();
     }
 
 

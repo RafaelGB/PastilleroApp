@@ -13,6 +13,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.PopupMenu;
 import android.widget.Toast;
@@ -26,7 +27,6 @@ public class EdicionActivity extends AppCompatActivity {
     private static final String TAG = "EdicionActivity";
 
     private TableLayout tableLayout;
-    private  ArrayList<Medicina> listaMedicinas;
     private String[] dias_semana;
     private Receta receta;
     private TimePicker timePicker;
@@ -41,9 +41,96 @@ public class EdicionActivity extends AppCompatActivity {
         timePicker = (TimePicker) findViewById(R.id.timePicker1);
         timePicker.setIs24HourView(true);
 
-        getSupportActionBar().setTitle("Editar");
+        Intent intent = getIntent();
+        String intencion = intent.getStringExtra("Intencion");
+        if(intencion.equals("Editar")) {
+            receta = intent.getParcelableExtra("Receta Editar");
+            cargarDatos(receta);
+        }
+
+        getSupportActionBar().setTitle("Crear Tarea");
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    public void cargarDatos(Receta receta) {
+        ArrayList<Medicina> lista_medicinas = receta.getArray_receta();
+        String[] dias_semana = receta.getSemana();
+        String nombre = receta.getNombre();
+        Medicina medicina;
+        View view;
+        int hora = receta.getHora();
+        int minuto = receta.getMinuto();
+
+        EditText editText_cantidad;
+        EditText editText_nombre;
+        EditText editTextReceta = (EditText) findViewById(R.id.editTextNombre);
+        editTextReceta.setText(nombre, TextView.BufferType.EDITABLE);
+
+        medicina = lista_medicinas.get(0);
+
+        editText_cantidad = (EditText) findViewById(R.id.editTextCant);
+        editText_cantidad.setText(String.valueOf(medicina.getCantidad()), TextView.BufferType.EDITABLE);
+
+        editText_nombre = (EditText) findViewById(R.id.editTextMed);
+        editText_nombre.setText(medicina.getNombre(), TextView.BufferType.EDITABLE);
+
+		//Primero agrego las vistas y luego escribo en ellas
+        int cuenta = lista_medicinas.size();
+        for(int i = 1; i < cuenta; ++i) {
+
+            View vista_edicion = LayoutInflater.from(this).inflate(R.layout.fila_medicamento, null);
+            tableLayout.addView(vista_edicion);
+
+            view = tableLayout.getChildAt(i+1);
+            medicina = lista_medicinas.get(i);
+            editText_cantidad = (EditText)view.findViewById(R.id.editTextCant);
+            editText_cantidad.setText(String.valueOf(medicina.getCantidad()), TextView.BufferType.EDITABLE);
+
+            editText_nombre = (EditText)view.findViewById(R.id.editTextMed);
+            editText_nombre.setText(medicina.getNombre(), TextView.BufferType.EDITABLE);
+        }
+
+
+
+        timePicker.setCurrentHour(receta.getHora());
+        timePicker.setCurrentMinute(receta.getMinuto());
+
+        for(int dia = 0; dia < dias_semana.length; dia++) {
+            String d = dias_semana[dia];
+            if(d != null)
+                cargarDatosBoxes(d);
+        }
+    }
+
+    public void cargarDatosBoxes(String dia) {
+
+        CheckBox checkBox;
+
+        switch(dia) {
+            case "Lunes": checkBox = findViewById(R.id.checkBLunes);
+                checkBox.setChecked(true);
+                break;
+            case "Martes": checkBox = findViewById(R.id.checkBMartes);
+                checkBox.setChecked(true);
+                break;
+            case "Miercoles": checkBox = findViewById(R.id.checkBMiercoles);
+                checkBox.setChecked(true);
+                break;
+            case "Jueves": checkBox = findViewById(R.id.checkBJueves);
+                checkBox.setChecked(true);
+                break;
+            case "Viernes": checkBox = findViewById(R.id.checkBViernes);
+                checkBox.setChecked(true);
+                break;
+            case "Sabado": checkBox = findViewById(R.id.checkBSabado);
+                checkBox.setChecked(true);
+                break;
+            case "Domingo": checkBox = findViewById(R.id.checkBDomingo);
+                checkBox.setChecked(true);
+                break;
+        }
+
     }
 
     @Override
@@ -76,12 +163,24 @@ public class EdicionActivity extends AppCompatActivity {
                 intent_receta.putExtra("Receta", receta);
                 setResult(RESULT_OK, intent_receta);*/
 
+                Intent intent_edit = getIntent();
+                String intencion = intent_edit.getStringExtra("Intencion");
+                int posicion = intent_edit.getIntExtra("Posicion", 0);
                 Intent intent = new Intent();
+
+                if(intencion.equals("Editar")) {
+                    intent.putExtra("Receta", receta);
+                    intent.putExtra("Posicion", posicion);
+                    setResult(RESULT_OK, intent);
+                }
+                else {
+                    intent.putExtra("Receta", receta);
+                    setResult(RESULT_OK, intent);
+                }
                 /*intent.putParcelableArrayListExtra("Medicamentos", receta.getArray_receta());
                 intent.putExtra("Hora", receta.getHora());
                 intent.putExtra("Minutos", receta.getMinuto());*/
-                intent.putExtra("Receta", receta);
-                setResult(RESULT_OK, intent);
+
 
                 this.finish();
                 return true;
@@ -99,7 +198,7 @@ public class EdicionActivity extends AppCompatActivity {
         int cantidad, hora, minuto;
         String nombre_medicamento;
 
-        listaMedicinas = new ArrayList<>();
+        ArrayList<Medicina> listaMedicinas = new ArrayList<>();
         //Leo toda la info y la guardo en listaMedicinas
         EditText editTextReceta = (EditText) findViewById(R.id.editTextNombre);
         String nombre_receta = editTextReceta.getText().toString();
@@ -146,10 +245,6 @@ public class EdicionActivity extends AppCompatActivity {
         checkBox = findViewById(R.id.checkBDomingo);
         if(checkBox.isChecked()) dias_semana[6] = "Domingo";
 
-    }
-
-    public ArrayList<Medicina> getListaMedicinas() {
-        return listaMedicinas;
     }
 
     public Receta getReceta() {
