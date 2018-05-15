@@ -103,35 +103,6 @@ public class EdicionActivity extends AppCompatActivity {
         }
     }
 
-    public void cargarDatosBoxes(String dia) {
-
-        CheckBox checkBox;
-
-        switch(dia) {
-            case "Lunes": checkBox = findViewById(R.id.checkBLunes);
-                checkBox.setChecked(true);
-                break;
-            case "Martes": checkBox = findViewById(R.id.checkBMartes);
-                checkBox.setChecked(true);
-                break;
-            case "Miercoles": checkBox = findViewById(R.id.checkBMiercoles);
-                checkBox.setChecked(true);
-                break;
-            case "Jueves": checkBox = findViewById(R.id.checkBJueves);
-                checkBox.setChecked(true);
-                break;
-            case "Viernes": checkBox = findViewById(R.id.checkBViernes);
-                checkBox.setChecked(true);
-                break;
-            case "Sabado": checkBox = findViewById(R.id.checkBSabado);
-                checkBox.setChecked(true);
-                break;
-            case "Domingo": checkBox = findViewById(R.id.checkBDomingo);
-                checkBox.setChecked(true);
-                break;
-        }
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -156,12 +127,6 @@ public class EdicionActivity extends AppCompatActivity {
 
             case R.id.guardar: {
                 getInformacionInterfaz();
-              /*  Intent intent = getIntent();
-                receta = intent.getParcelableExtra("Receta");*/
-
-               /* Intent intent_receta = new Intent();
-                intent_receta.putExtra("Receta", receta);
-                setResult(RESULT_OK, intent_receta);*/
 
                 Intent intent_edit = getIntent();
                 String intencion = intent_edit.getStringExtra("Intencion");
@@ -177,10 +142,6 @@ public class EdicionActivity extends AppCompatActivity {
                     intent.putExtra("Receta", receta);
                     setResult(RESULT_OK, intent);
                 }
-                /*intent.putParcelableArrayListExtra("Medicamentos", receta.getArray_receta());
-                intent.putExtra("Hora", receta.getHora());
-                intent.putExtra("Minutos", receta.getMinuto());*/
-
 
                 this.finish();
                 return true;
@@ -225,6 +186,34 @@ public class EdicionActivity extends AppCompatActivity {
     }
 
 
+    public void cargarDatosBoxes(String dia) {
+        CheckBox checkBox;
+        switch(dia) {
+            case "Lunes": checkBox = findViewById(R.id.checkBLunes);
+                checkBox.setChecked(true);
+                break;
+            case "Martes": checkBox = findViewById(R.id.checkBMartes);
+                checkBox.setChecked(true);
+                break;
+            case "Miercoles": checkBox = findViewById(R.id.checkBMiercoles);
+                checkBox.setChecked(true);
+                break;
+            case "Jueves": checkBox = findViewById(R.id.checkBJueves);
+                checkBox.setChecked(true);
+                break;
+            case "Viernes": checkBox = findViewById(R.id.checkBViernes);
+                checkBox.setChecked(true);
+                break;
+            case "Sabado": checkBox = findViewById(R.id.checkBSabado);
+                checkBox.setChecked(true);
+                break;
+            case "Domingo": checkBox = findViewById(R.id.checkBDomingo);
+                checkBox.setChecked(true);
+                break;
+        }
+    }
+
+
     public void onCheckboxClicked() {
 
         dias_semana= new String[7];
@@ -245,9 +234,5 @@ public class EdicionActivity extends AppCompatActivity {
         checkBox = findViewById(R.id.checkBDomingo);
         if(checkBox.isChecked()) dias_semana[6] = "Domingo";
 
-    }
-
-    public Receta getReceta() {
-        return receta;
     }
 }
