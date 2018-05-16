@@ -1,6 +1,9 @@
 package fdi.ucm.pastilleroapp;
 
-public class Medicina {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Medicina implements Parcelable{
 
     private String nombre;
     private int cantidad;
@@ -9,6 +12,23 @@ public class Medicina {
         this.nombre = nombre;
         this.cantidad = cantidad;
     }
+
+    protected Medicina(Parcel in) {
+        nombre = in.readString();
+        cantidad = in.readInt();
+    }
+
+    public static final Creator<Medicina> CREATOR = new Creator<Medicina>() {
+        @Override
+        public Medicina createFromParcel(Parcel in) {
+            return new Medicina(in);
+        }
+
+        @Override
+        public Medicina[] newArray(int size) {
+            return new Medicina[size];
+        }
+    };
 
     public String getNombre() {
         return nombre;
@@ -24,5 +44,16 @@ public class Medicina {
 
     public void setCantidad(int cantidad) {
         this.cantidad = cantidad;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(nombre);
+        dest.writeInt(cantidad);
     }
 }
