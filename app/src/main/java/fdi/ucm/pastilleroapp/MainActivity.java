@@ -18,17 +18,25 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
+    private static final String FILE_NAME = "copia.txt";
 
     private ListView listView;
-    private FloatingActionButton botonFlotante;
 
-    private ArrayList<Medicina> listaMedicinas;
     private ArrayList<Receta> listaRecetas;
     private RecetaListAdapter adapter;
 
@@ -41,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
         listaRecetas = new ArrayList<>();
 
         listView = (ListView) findViewById(R.id.listaTareas);
+        //Cargo datos almacenados en un txt privado y los cargo en listaRecetas.
+        cargar_datos();
 
         adapter = new RecetaListAdapter(this, R.layout.adapter_view_layout, listaRecetas);
         listView.setAdapter(adapter);
@@ -102,6 +112,175 @@ public class MainActivity extends AppCompatActivity {
         listaRecetas.set(posicion, receta);
     }
 
+    public void guardar_datos() {
+        int nrecetas = listaRecetas.size();
+        int nmedicinas;
+        String ndias;
+        FileOutputStream fos = null;
+
+        try {
+            fos = openFileOutput(FILE_NAME, MODE_PRIVATE);
+            fos.write(String.valueOf(nrecetas).getBytes());
+            fos.write("\n".getBytes());
+
+            for(int i = 0; i < nrecetas; ++i) {
+                Receta r = listaRecetas.get(i);
+                fos.write(r.getNombre().getBytes());
+                fos.write("\n".getBytes());
+                fos.write(getFecha(r).getBytes());
+                fos.write("\n".getBytes());
+                nmedicinas = r.getArray_receta().size();
+                fos.write(String.valueOf(nmedicinas).getBytes());
+                fos.write("\n".getBytes());
+                insertarMedicamentos(fos, r);
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if(fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public String getFecha(Receta receta) {
+        String fecha = "";
+        int ndias = 0;
+        String[] dias = receta.getSemana();
+        for(int i = 0; i < dias.length; i++) {
+            if(dias[i] != null) {
+                ndias++;
+                fecha += dias[i];
+                fecha += " ";
+            }
+        }
+
+        fecha = ndias + " " + fecha + " " + receta.getHora() + ":" + receta.getMinuto();
+
+        return fecha;
+    }
+
+    public void insertarMedicamentos(FileOutputStream fos, Receta receta) {
+        int nmedicinas = receta.getArray_receta().size();
+        Medicina medicina;
+        for(int i = 0; i < nmedicinas; ++i) {
+            try {
+                medicina = receta.getMedicina(i);
+                fos.write(String.valueOf(medicina.getCantidad()).getBytes());
+                fos.write(" ".getBytes());
+                fos.write(medicina.getNombre().getBytes());
+                fos.write("\n".getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void cargar_datos() {
+        FileInputStream fis = null;
+        Scanner scanner = null;
+
+        try {
+            fis = openFileInput(FILE_NAME);
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader br = new BufferedReader(isr);
+            String texto = "";
+            Receta receta;
+
+            scanner = new Scanner(fis);
+            texto = scanner.nextLine();
+            int nrecetas = Integer.parseInt(texto);
+
+            if(nrecetas > 0) {
+                for (int i = 0; i < nrecetas; ++i) {
+                    //Leo nombre receta
+                    texto = scanner.next();
+                    receta = new Receta(texto);
+
+                    //Agrego a la receta datos de fecha y hora
+                    extraeFecha(scanner, receta);
+
+                    //Obtengo numero medicamentos
+                    texto = scanner.next();
+                    int nmedicamentos = Integer.parseInt(texto);
+                    for (int j = 0; j < nmedicamentos; ++j) {
+                        receta.agregar_medicina(extraeMedicina(scanner));
+                    }
+
+                    listaRecetas.add(receta);
+                }
+            }
+
+
+            /*texto = br.readLine();
+            while((texto = br.readLine())!= null) {
+
+            }*/
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+
+            scanner.close();
+            if(fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void extraeFecha(Scanner scanner, Receta receta) {
+
+        //Numero dias de la semana
+        String texto = scanner.next();
+        int ndias = Integer.parseInt(texto);
+        String[] dias_semana = new String[7];
+
+        for(int i = 0; i < ndias; ++i) {
+            texto = scanner.next();
+            switch(texto) {
+                case "Lunes": dias_semana[0] = texto; break;
+                case "Martes": dias_semana[1] = texto; break;
+                case "Miercoles": dias_semana[2] = texto; break;
+                case "Jueves": dias_semana[3] = texto; break;
+                case "Viernes": dias_semana[4] = texto; break;
+                case "Sabado": dias_semana[5] = texto; break;
+                case "Domingo": dias_semana[6] = texto; break;
+            }
+        }
+
+        texto = scanner.next();
+        String[] partes = texto.split(":");
+        int hora = Integer.parseInt(partes[0]);
+        int minuto = Integer.parseInt(partes[1]);
+
+        receta.setSemana(dias_semana);
+        receta.setHora(hora);
+        receta.setMinuto(minuto);
+    }
+
+    public Medicina extraeMedicina(Scanner scanner) {
+
+        String texto = scanner.next();
+        int cantidad = Integer.parseInt(texto);
+        //Nombre medicamento
+        texto = scanner.next();
+
+        return new Medicina(texto, cantidad);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -149,6 +328,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        guardar_datos();
+    }
 }
 
 
