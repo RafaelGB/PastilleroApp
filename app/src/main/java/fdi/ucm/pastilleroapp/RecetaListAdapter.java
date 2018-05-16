@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class RecetaListAdapter extends ArrayAdapter<Receta> {
@@ -35,24 +36,37 @@ public class RecetaListAdapter extends ArrayAdapter<Receta> {
 
         String nombre = getItem(position).getNombre();
         ArrayList<Medicina> lista_medicina = getItem(position).getArray_receta();
-        Receta receta = new Receta(nombre,lista_medicina);
+        Receta receta = getItem(position);
+        String[] semana = receta.getSemana();
 
         LayoutInflater layoutInflater = LayoutInflater.from(mContext);
         convertView = layoutInflater.inflate(mResource,parent,false);
 
         TextView tvnombre = (TextView) convertView.findViewById(R.id.lista_text1);
-        TextView tvmedicina1 = (TextView) convertView.findViewById(R.id.lista_text2);
-        TextView tvmedicina2 = (TextView) convertView.findViewById(R.id.lista_text3);
+        TextView tvdias = (TextView) convertView.findViewById(R.id.lista_text2);
+        TextView tvhora = (TextView) convertView.findViewById(R.id.lista_text3);
 
         tvnombre.setText(nombre);
 
-        Medicina medicina = lista_medicina.get(0);
-        tvmedicina1.setText(medicina.getNombre() + " - " + medicina.getCantidad());
+        String dias = "";
+        for(int i = 0; i < semana.length; ++i) {
+            if(semana[i] != null) {
+                switch (semana[i]) {
+                    case "Lunes": dias += "L "; break;
+                    case "Martes": dias += "M "; break;
+                    case "Miercoles": dias += "X "; break;
+                    case "Jueves": dias += "J "; break;
+                    case "Viernes": dias += "V "; break;
+                    case "Sabado": dias += "S "; break;
+                    case "Domingo": dias += "D "; break;
+                }
+            }
+        }
 
-        if(lista_medicina.size() > 1) {
-            Medicina medicina2 = lista_medicina.get(1);
-            tvmedicina2.setText(medicina2.getNombre() + " - " + medicina2.getCantidad());
-        } else tvmedicina2.setText("");
+        tvdias.setText(dias);
+
+        String horas = "" + receta.getHora() + ":" + receta.getMinuto();
+        tvhora.setText(horas);
 
 
         ImageButton img_button = (ImageButton) convertView.findViewById(R.id.imageButton);
