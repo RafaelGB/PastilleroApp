@@ -21,6 +21,7 @@ import android.widget.Toast;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -186,37 +187,39 @@ public class MainActivity extends AppCompatActivity {
     public void cargar_datos() {
         FileInputStream fis = null;
         Scanner scanner = null;
+        File file = new File(FILE_NAME);
+        if (file.exists()) {
+            try {
+                fis = openFileInput(FILE_NAME);
 
-        try {
-            fis = openFileInput(FILE_NAME);
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader br = new BufferedReader(isr);
-            String texto = "";
-            Receta receta;
+                InputStreamReader isr = new InputStreamReader(fis);
+                BufferedReader br = new BufferedReader(isr);
+                String texto = "";
+                Receta receta;
 
-            scanner = new Scanner(fis);
-            texto = scanner.nextLine();
-            int nrecetas = Integer.parseInt(texto);
+                scanner = new Scanner(fis);
+                texto = scanner.nextLine();
+                int nrecetas = Integer.parseInt(texto);
 
-            if(nrecetas > 0) {
-                for (int i = 0; i < nrecetas; ++i) {
-                    //Leo nombre receta
-                    texto = scanner.next();
-                    receta = new Receta(texto);
+                if (nrecetas > 0) {
+                    for (int i = 0; i < nrecetas; ++i) {
+                        //Leo nombre receta
+                        texto = scanner.next();
+                        receta = new Receta(texto);
 
-                    //Agrego a la receta datos de fecha y hora
-                    extraeFecha(scanner, receta);
+                        //Agrego a la receta datos de fecha y hora
+                        extraeFecha(scanner, receta);
 
-                    //Obtengo numero medicamentos
-                    texto = scanner.next();
-                    int nmedicamentos = Integer.parseInt(texto);
-                    for (int j = 0; j < nmedicamentos; ++j) {
-                        receta.agregar_medicina(extraeMedicina(scanner));
+                        //Obtengo numero medicamentos
+                        texto = scanner.next();
+                        int nmedicamentos = Integer.parseInt(texto);
+                        for (int j = 0; j < nmedicamentos; ++j) {
+                            receta.agregar_medicina(extraeMedicina(scanner));
+                        }
+
+                        listaRecetas.add(receta);
                     }
-
-                    listaRecetas.add(receta);
                 }
-            }
 
 
             /*texto = br.readLine();
@@ -224,18 +227,19 @@ public class MainActivity extends AppCompatActivity {
 
             }*/
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
+            } catch(FileNotFoundException e){
+                e.printStackTrace();
+            } catch(IOException e){
+                e.printStackTrace();
+            } finally{
 
-            scanner.close();
-            if(fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                scanner.close();
+                if (fis != null) {
+                    try {
+                        fis.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -303,6 +307,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.farmacias: {
                 Log.d(TAG, "onOptionsItemSelected: ClickFarmacias");
                 Toast.makeText(getApplicationContext(),"Farmacias",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                startActivity(intent);
                 return true;
             }
             default: return true;
