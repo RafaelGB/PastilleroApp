@@ -1,6 +1,7 @@
 package fdi.ucm.pastilleroapp;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -187,8 +188,10 @@ public class MainActivity extends AppCompatActivity {
     public void cargar_datos() {
         FileInputStream fis = null;
         Scanner scanner = null;
-        File file = new File(FILE_NAME);
+        File file = new File("/data/data/fdi.ucm.pastilleroapp/files/copia.txt");
+
         if (file.exists()) {
+
             try {
                 fis = openFileInput(FILE_NAME);
 
@@ -226,12 +229,11 @@ public class MainActivity extends AppCompatActivity {
             while((texto = br.readLine())!= null) {
 
             }*/
-
-            } catch(FileNotFoundException e){
+            } catch (FileNotFoundException e) {
                 e.printStackTrace();
-            } catch(IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
-            } finally{
+            } finally {
 
                 scanner.close();
                 if (fis != null) {
@@ -243,6 +245,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+
     }
 
     public void extraeFecha(Scanner scanner, Receta receta) {
