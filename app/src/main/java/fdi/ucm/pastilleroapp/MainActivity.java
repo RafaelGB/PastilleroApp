@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
                 if (nrecetas > 0) {
                     for (int i = 0; i < nrecetas; ++i) {
                         //Leo nombre receta
-                        texto = scanner.next();
+                        texto = scanner.nextLine();
                         receta = new Receta(texto);
 
                         //Agrego a la receta datos de fecha y hora
@@ -281,9 +281,9 @@ public class MainActivity extends AppCompatActivity {
     public Medicina extraeMedicina(Scanner scanner) {
 
         String texto = scanner.next();
-        int cantidad = Integer.parseInt(texto);
+        double cantidad = Double.parseDouble(texto);
         //Nombre medicamento
-        texto = scanner.next();
+        texto = scanner.nextLine();
 
         return new Medicina(texto, cantidad);
     }

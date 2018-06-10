@@ -6,16 +6,16 @@ import android.os.Parcelable;
 public class Medicina implements Parcelable{
 
     private String nombre;
-    private int cantidad;
+    private double cantidad;
 
-    public Medicina(String nombre, int cantidad) {
+    public Medicina(String nombre, double cantidad) {
         this.nombre = nombre;
         this.cantidad = cantidad;
     }
 
     protected Medicina(Parcel in) {
         nombre = in.readString();
-        cantidad = in.readInt();
+        cantidad = in.readDouble();
     }
 
     public static final Creator<Medicina> CREATOR = new Creator<Medicina>() {
@@ -38,11 +38,11 @@ public class Medicina implements Parcelable{
         this.nombre = nombre;
     }
 
-    public int getCantidad() {
+    public double getCantidad() {
         return cantidad;
     }
 
-    public void setCantidad(int cantidad) {
+    public void setCantidad(double cantidad) {
         this.cantidad = cantidad;
     }
 
@@ -54,6 +54,6 @@ public class Medicina implements Parcelable{
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(nombre);
-        dest.writeInt(cantidad);
+        dest.writeDouble(cantidad);
     }
 }

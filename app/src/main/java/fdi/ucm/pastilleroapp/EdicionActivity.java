@@ -156,8 +156,9 @@ public class EdicionActivity extends AppCompatActivity {
         View view;
         EditText editText_cantidad;
         EditText editText_nombre;
-        int cantidad, hora, minuto;
+        int hora, minuto;
         String nombre_medicamento;
+        double cantidad;
 
         ArrayList<Medicina> listaMedicinas = new ArrayList<>();
         //Leo toda la info y la guardo en listaMedicinas
@@ -170,7 +171,7 @@ public class EdicionActivity extends AppCompatActivity {
         for(int i = 1; i < cuenta; ++i) {
             view = tableLayout.getChildAt(i);
             editText_cantidad = (EditText)view.findViewById(R.id.editTextCant);
-            cantidad =  Integer.parseInt(editText_cantidad.getText().toString());
+            cantidad = Double.parseDouble(editText_cantidad.getText().toString());
 
             editText_nombre = (EditText)view.findViewById(R.id.editTextMed);
             nombre_medicamento = editText_nombre.getText().toString();
