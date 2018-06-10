@@ -29,6 +29,7 @@ public class EdicionActivity extends AppCompatActivity {
     private TableLayout tableLayout;
     private String[] dias_semana;
     private Receta receta;
+    private boolean receta_finalizada;
     private TimePicker timePicker;
 
     @Override
@@ -41,6 +42,7 @@ public class EdicionActivity extends AppCompatActivity {
         timePicker = (TimePicker) findViewById(R.id.timePicker1);
         timePicker.setIs24HourView(true);
 
+        dias_semana= new String[7];
         Intent intent = getIntent();
         String intencion = intent.getStringExtra("Intencion");
         if(intencion.equals("Editar")) {
@@ -128,23 +130,30 @@ public class EdicionActivity extends AppCompatActivity {
             case R.id.guardar: {
                 getInformacionInterfaz();
 
-                Intent intent_edit = getIntent();
-                String intencion = intent_edit.getStringExtra("Intencion");
-                int posicion = intent_edit.getIntExtra("Posicion", 0);
-                Intent intent = new Intent();
-
-                if(intencion.equals("Editar")) {
-                    intent.putExtra("Receta", receta);
-                    intent.putExtra("Posicion", posicion);
-                    setResult(RESULT_OK, intent);
+                //dias semana comprobar
+                if(!checkDiasSemana() || !receta_finalizada) {
+                    Toast.makeText(getApplicationContext(),"Falta Informacion",Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    intent.putExtra("Receta", receta);
-                    setResult(RESULT_OK, intent);
+                    Intent intent_edit = getIntent();
+                    String intencion = intent_edit.getStringExtra("Intencion");
+                    int posicion = intent_edit.getIntExtra("Posicion", 0);
+                    Intent intent = new Intent();
+
+                    if(intencion.equals("Editar")) {
+                        intent.putExtra("Receta", receta);
+                        intent.putExtra("Posicion", posicion);
+                        setResult(RESULT_OK, intent);
+                    }
+                    else {
+                        intent.putExtra("Receta", receta);
+                        setResult(RESULT_OK, intent);
+                    }
+
+                    this.finish();
+                    return true;
                 }
 
-                this.finish();
-                return true;
             }
             default: return true;
         }
@@ -160,9 +169,13 @@ public class EdicionActivity extends AppCompatActivity {
         String nombre_medicamento;
         double cantidad;
 
+        receta_finalizada = false;
+
         ArrayList<Medicina> listaMedicinas = new ArrayList<>();
         //Leo toda la info y la guardo en listaMedicinas
         EditText editTextReceta = (EditText) findViewById(R.id.editTextNombre);
+
+        if(editTextReceta.getText().toString().trim().length() == 0) return;
         String nombre_receta = editTextReceta.getText().toString();
 
         TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker1);
@@ -171,9 +184,13 @@ public class EdicionActivity extends AppCompatActivity {
         for(int i = 1; i < cuenta; ++i) {
             view = tableLayout.getChildAt(i);
             editText_cantidad = (EditText)view.findViewById(R.id.editTextCant);
+
+            if(editText_cantidad.getText().toString().trim().length() == 0) return;
             cantidad = Double.parseDouble(editText_cantidad.getText().toString());
 
             editText_nombre = (EditText)view.findViewById(R.id.editTextMed);
+
+            if (editText_nombre.getText().toString().trim().length() == 0) return;
             nombre_medicamento = editText_nombre.getText().toString();
 
             listaMedicinas.add(new Medicina(nombre_medicamento, cantidad));
@@ -183,7 +200,20 @@ public class EdicionActivity extends AppCompatActivity {
         minuto = timePicker.getCurrentMinute();
 
         onCheckboxClicked();
+        receta_finalizada = true;
         receta = new Receta(nombre_receta, listaMedicinas, dias_semana, hora, minuto);
+    }
+
+
+    private boolean checkDiasSemana() {
+        boolean valido = false;
+        for(int i = 0; i < 7; ++i) {
+            if(dias_semana[i] != null) {
+                valido = true;
+                break;
+            }
+        }
+        return valido;
     }
 
 
@@ -216,8 +246,6 @@ public class EdicionActivity extends AppCompatActivity {
 
 
     public void onCheckboxClicked() {
-
-        dias_semana= new String[7];
         CheckBox checkBox;
 
         checkBox = findViewById(R.id.checkBLunes);
