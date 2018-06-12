@@ -44,6 +44,8 @@
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps"
             android:parentActivityName=".MainActivity"></activity>
+
+        <receiver android:name=".AlertReceiver"/>
     </application>
 
 </manifest>
