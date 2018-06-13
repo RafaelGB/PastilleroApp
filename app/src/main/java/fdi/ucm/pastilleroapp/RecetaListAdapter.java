@@ -37,7 +37,7 @@ public class RecetaListAdapter extends ArrayAdapter<Receta> {
         String nombre = getItem(position).getNombre();
         ArrayList<Medicina> lista_medicina = getItem(position).getArray_receta();
         Receta receta = getItem(position);
-        String[] semana = receta.getSemana();
+        ArrayList<String> semana = receta.getSemana();
 
         LayoutInflater layoutInflater = LayoutInflater.from(mContext);
         convertView = layoutInflater.inflate(mResource,parent,false);
@@ -49,8 +49,17 @@ public class RecetaListAdapter extends ArrayAdapter<Receta> {
         tvnombre.setText(nombre);
 
         String dias = "";
-        for(int i = 0; i < semana.length; ++i) {
-            if(semana[i] != null) {
+        for(int i = 0; i < semana.size(); ++i) {
+            switch (semana.get(i)) {
+                case "Lunes": dias += "L "; break;
+                case "Martes": dias += "M "; break;
+                case "Miercoles": dias += "X "; break;
+                case "Jueves": dias += "J "; break;
+                case "Viernes": dias += "V "; break;
+                case "Sabado": dias += "S "; break;
+                case "Domingo": dias += "D "; break;
+            }
+            /*if(semana[i] != null) {
                 switch (semana[i]) {
                     case "Lunes": dias += "L "; break;
                     case "Martes": dias += "M "; break;
@@ -60,7 +69,7 @@ public class RecetaListAdapter extends ArrayAdapter<Receta> {
                     case "Sabado": dias += "S "; break;
                     case "Domingo": dias += "D "; break;
                 }
-            }
+            }*/
         }
 
         tvdias.setText(dias);

@@ -155,13 +155,17 @@ public class MainActivity extends AppCompatActivity {
     public String getFecha(Receta receta) {
         String fecha = "";
         int ndias = 0;
-        String[] dias = receta.getSemana();
-        for(int i = 0; i < dias.length; i++) {
-            if(dias[i] != null) {
+        ArrayList<String> dias = receta.getSemana();
+        //String[] dias = receta.getSemana();
+        for(int i = 0; i < dias.size(); i++) {
+            ndias++;
+            fecha += dias.get(i);
+            fecha += " ";
+            /*if(dias[i] != null) {
                 ndias++;
                 fecha += dias[i];
                 fecha += " ";
-            }
+            }*/
         }
 
         fecha = ndias + " " + fecha + " " + receta.getHora() + ":" + receta.getMinuto();
@@ -253,18 +257,19 @@ public class MainActivity extends AppCompatActivity {
         //Numero dias de la semana
         String texto = scanner.next();
         int ndias = Integer.parseInt(texto);
-        String[] dias_semana = new String[7];
+        //String[] dias_semana = new String[7];
+        ArrayList<String> dias_semana = new ArrayList<>();
 
         for(int i = 0; i < ndias; ++i) {
             texto = scanner.next();
             switch(texto) {
-                case "Lunes": dias_semana[0] = texto; break;
-                case "Martes": dias_semana[1] = texto; break;
-                case "Miercoles": dias_semana[2] = texto; break;
-                case "Jueves": dias_semana[3] = texto; break;
-                case "Viernes": dias_semana[4] = texto; break;
-                case "Sabado": dias_semana[5] = texto; break;
-                case "Domingo": dias_semana[6] = texto; break;
+                case "Lunes": dias_semana.add(texto); break;
+                case "Martes": dias_semana.add(texto); break;
+                case "Miercoles": dias_semana.add(texto); break;
+                case "Jueves": dias_semana.add(texto); break;
+                case "Viernes": dias_semana.add(texto); break;
+                case "Sabado": dias_semana.add(texto); break;
+                case "Domingo": dias_semana.add(texto); break;
             }
         }
 

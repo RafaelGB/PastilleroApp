@@ -8,7 +8,8 @@ import java.util.ArrayList;
 public class Receta implements Parcelable{
 
     private ArrayList<Medicina> array_receta;
-    private String[] semana;
+    //private String[] semana;
+    private ArrayList<String> semana;
     private String nombre;
     private int hora;
     private int minuto;
@@ -23,7 +24,7 @@ public class Receta implements Parcelable{
         this.array_receta = array_receta;
     }
 
-    public Receta(String nombre, ArrayList<Medicina> array_receta, String[] semana, int hora, int minuto) {
+    public Receta(String nombre, ArrayList<Medicina> array_receta, ArrayList<String> semana, int hora, int minuto) {
         this.array_receta = array_receta;
         this.semana = semana;
         this.nombre = nombre;
@@ -31,9 +32,10 @@ public class Receta implements Parcelable{
         this.minuto = minuto;
     }
 
+
     protected Receta(Parcel in) {
         array_receta = in.createTypedArrayList(Medicina.CREATOR);
-        semana = in.createStringArray();
+        semana = in.createStringArrayList();
         nombre = in.readString();
         hora = in.readInt();
         minuto = in.readInt();
@@ -75,11 +77,11 @@ public class Receta implements Parcelable{
         this.nombre = nombre;
     }
 
-    public String[] getSemana() {
+    public ArrayList<String> getSemana() {
         return semana;
     }
 
-    public void setSemana(String[] semana) {
+    public void setSemana(ArrayList<String> semana) {
         this.semana = semana;
     }
 
@@ -99,6 +101,7 @@ public class Receta implements Parcelable{
         this.minuto = minuto;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -107,7 +110,7 @@ public class Receta implements Parcelable{
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeTypedList(array_receta);
-        dest.writeStringArray(semana);
+        dest.writeStringList(semana);
         dest.writeString(nombre);
         dest.writeInt(hora);
         dest.writeInt(minuto);

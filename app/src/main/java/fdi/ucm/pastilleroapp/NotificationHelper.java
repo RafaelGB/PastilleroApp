@@ -18,6 +18,7 @@ public class NotificationHelper extends ContextWrapper {
     public NotificationHelper(Context base) {
         super(base);
         manager = getSystemService(NotificationManager.class);
+        createChannel();
     }
 
     //Creo canal para notificacion, hay un canal por Receta.
@@ -52,12 +53,6 @@ public class NotificationHelper extends ContextWrapper {
                 .setStyle(inboxStyle)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_ALARM);
-    }
-
-    private void deleteChannel(String canalID) {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            manager.deleteNotificationChannel(canalID);
-        }
     }
 
     public NotificationManager getManager() {

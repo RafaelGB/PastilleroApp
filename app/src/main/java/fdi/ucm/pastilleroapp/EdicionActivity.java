@@ -27,7 +27,7 @@ public class EdicionActivity extends AppCompatActivity {
     private static final String TAG = "EdicionActivity";
 
     private TableLayout tableLayout;
-    private String[] dias_semana;
+    private ArrayList<String> semana;
     private Receta receta;
     private boolean receta_finalizada;
     private TimePicker timePicker;
@@ -42,7 +42,7 @@ public class EdicionActivity extends AppCompatActivity {
         timePicker = (TimePicker) findViewById(R.id.timePicker1);
         timePicker.setIs24HourView(true);
 
-        dias_semana= new String[7];
+        semana = new ArrayList<>();
         Intent intent = getIntent();
         String intencion = intent.getStringExtra("Intencion");
         if(intencion.equals("Editar")) {
@@ -57,7 +57,7 @@ public class EdicionActivity extends AppCompatActivity {
 
     public void cargarDatos(Receta receta) {
         ArrayList<Medicina> lista_medicinas = receta.getArray_receta();
-        String[] dias_semana = receta.getSemana();
+        ArrayList<String> dias_semana = receta.getSemana();
         String nombre = receta.getNombre();
         Medicina medicina;
         View view;
@@ -98,10 +98,8 @@ public class EdicionActivity extends AppCompatActivity {
         timePicker.setCurrentHour(receta.getHora());
         timePicker.setCurrentMinute(receta.getMinuto());
 
-        for(int dia = 0; dia < dias_semana.length; dia++) {
-            String d = dias_semana[dia];
-            if(d != null)
-                cargarDatosBoxes(d);
+        for(int dia = 0; dia < dias_semana.size(); dia++) {
+            cargarDatosBoxes(dias_semana.get(dia));
         }
     }
 
@@ -131,7 +129,7 @@ public class EdicionActivity extends AppCompatActivity {
                 getInformacionInterfaz();
 
                 //dias semana comprobar
-                if(!checkDiasSemana() || !receta_finalizada) {
+                if(semana.size() == 0 || !receta_finalizada) {
                     Toast.makeText(getApplicationContext(),"Falta Informacion",Toast.LENGTH_SHORT).show();
                 }
                 else {
@@ -201,11 +199,11 @@ public class EdicionActivity extends AppCompatActivity {
 
         onCheckboxClicked();
         receta_finalizada = true;
-        receta = new Receta(nombre_receta, listaMedicinas, dias_semana, hora, minuto);
+        receta = new Receta(nombre_receta, listaMedicinas, semana, hora, minuto);
     }
 
 
-    private boolean checkDiasSemana() {
+    /*private boolean checkDiasSemana() {
         boolean valido = false;
         for(int i = 0; i < 7; ++i) {
             if(dias_semana[i] != null) {
@@ -214,7 +212,7 @@ public class EdicionActivity extends AppCompatActivity {
             }
         }
         return valido;
-    }
+    }*/
 
 
     public void cargarDatosBoxes(String dia) {
@@ -249,19 +247,19 @@ public class EdicionActivity extends AppCompatActivity {
         CheckBox checkBox;
 
         checkBox = findViewById(R.id.checkBLunes);
-        if(checkBox.isChecked()) dias_semana[0] = "Lunes";
+        if(checkBox.isChecked()) semana.add("Lunes");
         checkBox = findViewById(R.id.checkBMartes);
-        if(checkBox.isChecked()) dias_semana[1] = "Martes";
+        if(checkBox.isChecked()) semana.add("Martes");
         checkBox = findViewById(R.id.checkBMiercoles);
-        if(checkBox.isChecked()) dias_semana[2] = "Miercoles";
+        if(checkBox.isChecked()) semana.add("Miercoles");
         checkBox = findViewById(R.id.checkBJueves);
-        if(checkBox.isChecked()) dias_semana[3] = "Jueves";
+        if(checkBox.isChecked()) semana.add("Jueves");
         checkBox = findViewById(R.id.checkBViernes);
-        if(checkBox.isChecked()) dias_semana[4] = "Viernes";
+        if(checkBox.isChecked()) semana.add("Viernes");
         checkBox = findViewById(R.id.checkBSabado);
-        if(checkBox.isChecked()) dias_semana[5] = "Sabado";
+        if(checkBox.isChecked()) semana.add("Sabado");
         checkBox = findViewById(R.id.checkBDomingo);
-        if(checkBox.isChecked()) dias_semana[6] = "Domingo";
+        if(checkBox.isChecked()) semana.add("Domingo");
 
     }
 }
