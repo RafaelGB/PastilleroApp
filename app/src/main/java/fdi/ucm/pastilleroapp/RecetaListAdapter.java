@@ -59,22 +59,15 @@ public class RecetaListAdapter extends ArrayAdapter<Receta> {
                 case "Sabado": dias += "S "; break;
                 case "Domingo": dias += "D "; break;
             }
-            /*if(semana[i] != null) {
-                switch (semana[i]) {
-                    case "Lunes": dias += "L "; break;
-                    case "Martes": dias += "M "; break;
-                    case "Miercoles": dias += "X "; break;
-                    case "Jueves": dias += "J "; break;
-                    case "Viernes": dias += "V "; break;
-                    case "Sabado": dias += "S "; break;
-                    case "Domingo": dias += "D "; break;
-                }
-            }*/
         }
 
         tvdias.setText(dias);
 
-        String horas = "" + receta.getHora() + ":" + receta.getMinuto();
+        String minuto;
+        if(receta.getMinuto() < 10) minuto = "0" + String.valueOf(receta.getMinuto());
+        else minuto = String.valueOf(receta.getMinuto());
+
+        String horas = "" + String.valueOf(receta.getHora()) + ":" + minuto;
         tvhora.setText(horas);
 
 

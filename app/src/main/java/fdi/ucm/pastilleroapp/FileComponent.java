@@ -9,6 +9,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 import org.xmlpull.v1.XmlSerializer;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -29,6 +30,7 @@ public class FileComponent {
     public ArrayList<Receta> readXmlPullParser(Context context) {
         XmlPullParserFactory factory;
         FileInputStream fis = null;
+        File file = context.getFileStreamPath(FILE_NAME);
         ArrayList<Receta> lista_recetas = new ArrayList<>();
 
         try {
@@ -36,6 +38,9 @@ public class FileComponent {
             factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
             XmlPullParser xpp = factory.newPullParser();
+
+            if(file == null || !file.exists()) return lista_recetas;
+
             fis = context.openFileInput(FILE_NAME);
 
             ArrayList<Medicina> lista_medicinas = new ArrayList<>();
