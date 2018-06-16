@@ -69,6 +69,10 @@ public class Receta implements Parcelable{
         return array_receta;
     }
 
+    public void setArray_receta(ArrayList<Medicina> array_receta) {
+        this.array_receta = array_receta;
+    }
+
     public String getNombre() {
         return nombre;
     }

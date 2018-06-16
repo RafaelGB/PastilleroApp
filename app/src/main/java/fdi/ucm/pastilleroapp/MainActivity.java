@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Receta> listaRecetas;
     private RecetaListAdapter adapter;
+    private FileComponent fileComponent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +49,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_menu);
         Log.d(TAG, "onCreate: Starting");
 
+        fileComponent = new FileComponent();
         listaRecetas = new ArrayList<>();
 
         listView = (ListView) findViewById(R.id.listaTareas);
-        //Cargo datos almacenados en un txt privado y los cargo en listaRecetas.
-        cargar_datos();
+
+        //Cargo datos almacenados en un xml privado y los cargo en listaRecetas.
+        listaRecetas = fileComponent.readXmlPullParser(getApplicationContext());
+        //cargar_datos();
 
         adapter = new RecetaListAdapter(this, R.layout.adapter_view_layout, listaRecetas);
         listView.setAdapter(adapter);
@@ -332,7 +336,7 @@ public class MainActivity extends AppCompatActivity {
             add_receta(receta);
         }
 
-        if(requestCode == 666 && resultCode == RESULT_OK) {
+        else if(requestCode == 666 && resultCode == RESULT_OK) {
             Receta receta = data.getParcelableExtra("Receta");
             int posicion = data.getIntExtra("Posicion",0);
             edit_receta(receta, posicion);
@@ -341,12 +345,14 @@ public class MainActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
-
     @Override
     protected void onStop() {
         super.onStop();
-        guardar_datos();
+        fileComponent.getRecetas(listaRecetas);
+        fileComponent.writeToTxtFile(getApplicationContext());
+        fileComponent.writeToXmlFile(getApplicationContext());
     }
+
 }
 
 
