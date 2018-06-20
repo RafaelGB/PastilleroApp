@@ -41,10 +41,12 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private static final String FILE_NAME_1 = "copia.txt";
+    private static int nAlarmas;
 
     private ListView listView;
 
     private ArrayList<Receta> listaRecetas;
+    private ArrayList<AlarmID> listaID;
     private RecetaListAdapter adapter;
     private FileComponent fileComponent;
 
@@ -56,13 +58,14 @@ public class MainActivity extends AppCompatActivity {
 
         fileComponent = new FileComponent();
         listaRecetas = new ArrayList<>();
+        listaID = new ArrayList<>();
+        nAlarmas = 0;
 
         listView = (ListView) findViewById(R.id.listaTareas);
 
         //Cargo datos almacenados en un xml privado y los cargo en listaRecetas.
         listaRecetas = fileComponent.readXmlPullParser(getApplicationContext());
         cargarAlarmas();
-        //cargar_datos();
 
         adapter = new RecetaListAdapter(this, R.layout.adapter_view_layout, listaRecetas);
         listView.setAdapter(adapter);
@@ -113,196 +116,23 @@ public class MainActivity extends AppCompatActivity {
 
     public void eliminar_receta(int posicion) {
         listaRecetas.remove(posicion);
-        cancelAlarm(posicion);
+        ArrayList<Integer> idAlarmas = listaID.get(posicion).getIdAlarmas();
+        for(int id: idAlarmas) {
+            cancelAlarm(id);
+        }
+
+        listaID.remove(posicion);
     }
 
     public void edit_receta(Receta receta, int posicion) {
         listaRecetas.set(posicion, receta);
     }
 
-    public void guardar_datos() {
-        int nrecetas = listaRecetas.size();
-        int nmedicinas;
-        String ndias;
-        FileOutputStream fos = null;
-
-        try {
-            fos = openFileOutput(FILE_NAME_1, MODE_PRIVATE);
-            fos.write(String.valueOf(nrecetas).getBytes());
-            fos.write("\n".getBytes());
-
-            for(int i = 0; i < nrecetas; ++i) {
-                Receta r = listaRecetas.get(i);
-                fos.write(r.getNombre().getBytes());
-                fos.write("\n".getBytes());
-                fos.write(getFecha(r).getBytes());
-                fos.write("\n".getBytes());
-                nmedicinas = r.getArray_receta().size();
-                fos.write(String.valueOf(nmedicinas).getBytes());
-                fos.write("\n".getBytes());
-                insertarMedicamentos(fos, r);
-            }
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if(fos != null) {
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    public String getFecha(Receta receta) {
-        String fecha = "";
-        int ndias = 0;
-        ArrayList<String> dias = receta.getSemana();
-        //String[] dias = receta.getSemana();
-        for(int i = 0; i < dias.size(); i++) {
-            ndias++;
-            fecha += dias.get(i);
-            fecha += " ";
-            /*if(dias[i] != null) {
-                ndias++;
-                fecha += dias[i];
-                fecha += " ";
-            }*/
-        }
-
-        fecha = ndias + " " + fecha + " " + receta.getHora() + ":" + receta.getMinuto();
-
-        return fecha;
-    }
-
-    public void insertarMedicamentos(FileOutputStream fos, Receta receta) {
-        int nmedicinas = receta.getArray_receta().size();
-        Medicina medicina;
-        for(int i = 0; i < nmedicinas; ++i) {
-            try {
-                medicina = receta.getMedicina(i);
-                fos.write(String.valueOf(medicina.getCantidad()).getBytes());
-                fos.write(" ".getBytes());
-                fos.write(medicina.getNombre().getBytes());
-                fos.write("\n".getBytes());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     private void cargarAlarmas() {
        for(Receta receta: listaRecetas) {
-           programarAlarmas(listaRecetas.indexOf(receta));
+            listaID.add(new AlarmID());
+            programarAlarmas(listaRecetas.indexOf(receta));
         }
-    }
-
-    public void cargar_datos() {
-        FileInputStream fis = null;
-        Scanner scanner = null;
-        File file = getApplicationContext().getFileStreamPath(FILE_NAME_1);
-
-        if (file.exists()) {
-
-            try {
-                fis = openFileInput(FILE_NAME_1);
-
-                InputStreamReader isr = new InputStreamReader(fis);
-                BufferedReader br = new BufferedReader(isr);
-                String texto = "";
-                Receta receta;
-
-                scanner = new Scanner(fis);
-                texto = scanner.nextLine();
-                int nrecetas = Integer.parseInt(texto);
-
-                if (nrecetas > 0) {
-                    for (int i = 0; i < nrecetas; ++i) {
-                        //Leo nombre receta
-                        texto = scanner.nextLine();
-                        receta = new Receta(texto);
-
-                        //Agrego a la receta datos de fecha y hora
-                        extraeFecha(scanner, receta);
-
-                        //Obtengo numero medicamentos
-                        texto = scanner.next();
-                        int nmedicamentos = Integer.parseInt(texto);
-                        for (int j = 0; j < nmedicamentos; ++j) {
-                            receta.agregar_medicina(extraeMedicina(scanner));
-                        }
-
-                        listaRecetas.add(receta);
-                    }
-                }
-
-
-            /*texto = br.readLine();
-            while((texto = br.readLine())!= null) {
-
-            }*/
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-
-                scanner.close();
-                if (fis != null) {
-                    try {
-                        fis.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
-    }
-
-    public void extraeFecha(Scanner scanner, Receta receta) {
-
-        //Numero dias de la semana
-        String texto = scanner.next();
-        int ndias = Integer.parseInt(texto);
-        //String[] dias_semana = new String[7];
-        ArrayList<String> dias_semana = new ArrayList<>();
-
-        for(int i = 0; i < ndias; ++i) {
-            texto = scanner.next();
-            switch(texto) {
-                case "Lunes": dias_semana.add(texto); break;
-                case "Martes": dias_semana.add(texto); break;
-                case "Miercoles": dias_semana.add(texto); break;
-                case "Jueves": dias_semana.add(texto); break;
-                case "Viernes": dias_semana.add(texto); break;
-                case "Sabado": dias_semana.add(texto); break;
-                case "Domingo": dias_semana.add(texto); break;
-            }
-        }
-
-        texto = scanner.next();
-        String[] partes = texto.split(":");
-        int hora = Integer.parseInt(partes[0]);
-        int minuto = Integer.parseInt(partes[1]);
-
-        receta.setSemana(dias_semana);
-        receta.setHora(hora);
-        receta.setMinuto(minuto);
-    }
-
-    public Medicina extraeMedicina(Scanner scanner) {
-
-        String texto = scanner.next();
-        double cantidad = Double.parseDouble(texto);
-        //Nombre medicamento
-        texto = scanner.nextLine();
-
-        return new Medicina(texto, cantidad);
     }
 
     @Override
@@ -326,7 +156,6 @@ public class MainActivity extends AppCompatActivity {
             }
             case R.id.farmacias: {
                 Log.d(TAG, "onOptionsItemSelected: ClickFarmacias");
-                Toast.makeText(getApplicationContext(),"Farmacias",Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this, MapsActivity.class);
                 startActivity(intent);
                 return true;
@@ -343,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
             Receta receta = data.getParcelableExtra("Receta");
             add_receta(receta);
 
+            listaID.add(new AlarmID());
             programarAlarmas(listaRecetas.indexOf(receta));
         }
 
@@ -351,6 +181,12 @@ public class MainActivity extends AppCompatActivity {
             int posicion = data.getIntExtra("Posicion",0);
             edit_receta(receta, posicion);
 
+            ArrayList<Integer> idAlarmas = listaID.get(posicion).getIdAlarmas();
+            for(int id: idAlarmas) {
+                cancelAlarm(id);
+            }
+
+            listaID.get(posicion).deleteAlarms();
             programarAlarmas(posicion);
         }
 
@@ -361,28 +197,20 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<String> semana = listaRecetas.get(posicion).getSemana();
         for (String dia: semana) {
             switch (dia) {
-                case "Lunes": setAlarm(posicion,Calendar.MONDAY); break;
-                case "Martes": setAlarm(posicion,Calendar.TUESDAY); break;
-                case "Miercoles": setAlarm(posicion,Calendar.WEDNESDAY); break;
-                case "Jueves": setAlarm(posicion,Calendar.THURSDAY); break;
-                case "Viernes": setAlarm(posicion,Calendar.FRIDAY); break;
-                case "Sabado": setAlarm(posicion,Calendar.SATURDAY); break;
-                case "Domingo": setAlarm(posicion,Calendar.SUNDAY); break;
+                case "Lunes": setAlarm(posicion,Calendar.MONDAY, nAlarmas); break;
+                case "Martes": setAlarm(posicion,Calendar.TUESDAY, nAlarmas); break;
+                case "Miercoles": setAlarm(posicion,Calendar.WEDNESDAY, nAlarmas); break;
+                case "Jueves": setAlarm(posicion,Calendar.THURSDAY, nAlarmas); break;
+                case "Viernes": setAlarm(posicion,Calendar.FRIDAY, nAlarmas); break;
+                case "Sabado": setAlarm(posicion,Calendar.SATURDAY, nAlarmas); break;
+                case "Domingo": setAlarm(posicion,Calendar.SUNDAY, nAlarmas); break;
             }
+            listaID.get(posicion).addAlarma(nAlarmas);
+            nAlarmas++;
         }
     }
 
-    private void setAlarm(int posicion, int dia_semana) {
-        /*Calendar c = Calendar.getInstance();
-        c.set(Calendar.DAY_OF_WEEK, dia_semana);
-        c.set(Calendar.HOUR_OF_DAY, listaRecetas.get(posicion).getHora());
-        c.set(Calendar.MINUTE, listaRecetas.get(posicion).getMinuto());
-        c.set(Calendar.SECOND, 0);
-
-        // Check we aren't setting it in the past which would trigger it to fire instantly
-        if(c.getTimeInMillis() < System.currentTimeMillis()) {
-            c.add(Calendar.DAY_OF_YEAR, 7);
-        }*/
+    private void setAlarm(int posicion, int dia_semana, int idAlarma) {
 
         Calendar c = Calendar.getInstance();
         c.set(Calendar.DAY_OF_WEEK, dia_semana);
@@ -404,17 +232,15 @@ public class MainActivity extends AppCompatActivity {
         extra.putInt("posicion", posicion);
 
         intent.putExtras(extra);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, posicion, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, idAlarma, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), 7 * 24 * 60 * 60 * 1000, pendingIntent);
-        //alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
-       // alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
     }
 
 
-    private void cancelAlarm(int posicion) {
+    private void cancelAlarm(int idAlarma) {
         Intent intent = new Intent(this, AlertReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, posicion, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, idAlarma, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
     }

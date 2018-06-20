@@ -46,7 +46,7 @@ public class NotificationHelper extends ContextWrapper {
             inboxStyle.addLine(m);
         }
 
-        Intent activityIntent = new Intent(getBaseContext(), MainActivity.class);
+        Intent activityIntent = new Intent(getApplicationContext(), MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(this,
                 0, activityIntent, 0);
         /*Intent activityIntent = new Intent(this, EdicionActivity.class);

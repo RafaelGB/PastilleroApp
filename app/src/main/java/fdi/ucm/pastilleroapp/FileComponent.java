@@ -115,6 +115,7 @@ public class FileComponent {
 
 
 
+
     public void writeToXmlFile(Context context) {
         XmlSerializer serializer = Xml.newSerializer();
         StringWriter writer = new StringWriter();
