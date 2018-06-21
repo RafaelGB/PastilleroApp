@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
@@ -49,13 +51,8 @@ public class NotificationHelper extends ContextWrapper {
         Intent activityIntent = new Intent(getApplicationContext(), MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(this,
                 0, activityIntent, 0);
-        /*Intent activityIntent = new Intent(this, EdicionActivity.class);
-        activityIntent.putExtra("Intencion", "Editar");
-        activityIntent.putExtra("Posicion", position);
-        activityIntent.putExtra("Receta Editar", receta);
 
-        PendingIntent contentIntent = PendingIntent.getActivity(this,
-                666, activityIntent, 0);*/
+        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         return new NotificationCompat.Builder(getApplicationContext(), MYCHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_alarm_white_24dp)
@@ -65,6 +62,7 @@ public class NotificationHelper extends ContextWrapper {
                 .setAutoCancel(true)
                 .setColor(Color.MAGENTA)
                 .setStyle(inboxStyle)
+                .setSound(uri)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_ALARM);
     }

@@ -124,9 +124,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void cargarAlarmas() {
-       for(Receta receta: listaRecetas) {
+        nAlarmas = 0;
 
-           nAlarmas = 0;
+       for(Receta receta: listaRecetas) {
            ArrayList<Integer> idAlarmas = receta.getIdAlarmas();
            for(int id: idAlarmas) {
                cancelAlarm(id);
@@ -182,12 +182,6 @@ public class MainActivity extends AppCompatActivity {
             int posicion = data.getIntExtra("Posicion",0);
             edit_receta(receta, posicion);
 
-            ArrayList<Integer> idAlarmas = listaRecetas.get(posicion).getIdAlarmas();
-            for(int id: idAlarmas) {
-                cancelAlarm(id);
-            }
-
-            listaRecetas.get(posicion).deleteAlarms();
             programarAlarmas(posicion);
         }
 
