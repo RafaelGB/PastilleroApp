@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
     private ListView listView;
 
     private ArrayList<Receta> listaRecetas;
-    private ArrayList<AlarmID> listaID;
     private RecetaListAdapter adapter;
     private FileComponent fileComponent;
 
@@ -58,8 +57,6 @@ public class MainActivity extends AppCompatActivity {
 
         fileComponent = new FileComponent();
         listaRecetas = new ArrayList<>();
-        listaID = new ArrayList<>();
-        nAlarmas = 0;
 
         listView = (ListView) findViewById(R.id.listaTareas);
 
@@ -115,13 +112,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void eliminar_receta(int posicion) {
-        listaRecetas.remove(posicion);
-        ArrayList<Integer> idAlarmas = listaID.get(posicion).getIdAlarmas();
+        ArrayList<Integer> idAlarmas = listaRecetas.get(posicion).getIdAlarmas();
         for(int id: idAlarmas) {
             cancelAlarm(id);
         }
-
-        listaID.remove(posicion);
+        listaRecetas.remove(posicion);
     }
 
     public void edit_receta(Receta receta, int posicion) {
@@ -130,8 +125,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void cargarAlarmas() {
        for(Receta receta: listaRecetas) {
-            listaID.add(new AlarmID());
-            programarAlarmas(listaRecetas.indexOf(receta));
+
+           nAlarmas = 0;
+           ArrayList<Integer> idAlarmas = receta.getIdAlarmas();
+           for(int id: idAlarmas) {
+               cancelAlarm(id);
+           }
+
+           receta.deleteAlarms();
+           programarAlarmas(listaRecetas.indexOf(receta));
         }
     }
 
@@ -172,7 +174,6 @@ public class MainActivity extends AppCompatActivity {
             Receta receta = data.getParcelableExtra("Receta");
             add_receta(receta);
 
-            listaID.add(new AlarmID());
             programarAlarmas(listaRecetas.indexOf(receta));
         }
 
@@ -181,12 +182,12 @@ public class MainActivity extends AppCompatActivity {
             int posicion = data.getIntExtra("Posicion",0);
             edit_receta(receta, posicion);
 
-            ArrayList<Integer> idAlarmas = listaID.get(posicion).getIdAlarmas();
+            ArrayList<Integer> idAlarmas = listaRecetas.get(posicion).getIdAlarmas();
             for(int id: idAlarmas) {
                 cancelAlarm(id);
             }
 
-            listaID.get(posicion).deleteAlarms();
+            listaRecetas.get(posicion).deleteAlarms();
             programarAlarmas(posicion);
         }
 
@@ -205,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
                 case "Sabado": setAlarm(posicion,Calendar.SATURDAY, nAlarmas); break;
                 case "Domingo": setAlarm(posicion,Calendar.SUNDAY, nAlarmas); break;
             }
-            listaID.get(posicion).addAlarma(nAlarmas);
+            listaRecetas.get(posicion).setIdAlarmas(nAlarmas);
             nAlarmas++;
         }
     }

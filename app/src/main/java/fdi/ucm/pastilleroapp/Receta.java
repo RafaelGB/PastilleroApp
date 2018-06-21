@@ -10,13 +10,13 @@ public class Receta implements Parcelable{
     private ArrayList<Medicina> array_receta;
     //private String[] semana;
     private ArrayList<String> semana;
+    private ArrayList<Integer> idAlarmas;
     private String nombre;
     private int hora;
     private int minuto;
 
     public Receta(String nombre) {
         this.nombre = nombre;
-        array_receta = new ArrayList<Medicina>();
     }
 
     public Receta(String nombre, ArrayList<Medicina> array_receta) {
@@ -105,6 +105,19 @@ public class Receta implements Parcelable{
         this.minuto = minuto;
     }
 
+
+    public ArrayList<Integer> getIdAlarmas() {
+        return idAlarmas;
+    }
+
+    public void setIdAlarmas(int id) {
+        if(idAlarmas == null) idAlarmas = new ArrayList<>();
+        idAlarmas.add(id);
+    }
+
+    public void deleteAlarms() {
+        idAlarmas.clear();
+    }
 
     @Override
     public int describeContents() {

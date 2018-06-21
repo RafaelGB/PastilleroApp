@@ -77,6 +77,8 @@ public class FileComponent {
                        }
                        else if(tagname.equals("dia")) {
                            lista_semana.add(xpp.getAttributeValue("","nombre"));
+                           int idAlarma = Integer.parseInt(xpp.getAttributeValue("","idAlarma"));
+                           receta.setIdAlarmas(idAlarma);
                        }
                    } break;
                    case XmlPullParser.END_TAG: {
@@ -125,9 +127,11 @@ public class FileComponent {
 
             serializer.startTag("","lista_recetas");
             serializer.attribute("","numero", String.valueOf(listaRecetas.size()));
+
             for(Receta receta: listaRecetas) {
                 ArrayList<Medicina> listaMedicinas = receta.getArray_receta();
                 ArrayList<String> semana = receta.getSemana();
+                ArrayList<Integer> idAlarmas = receta.getIdAlarmas();
 
                 serializer.startTag("","receta");
                 serializer.attribute("","nombre",receta.getNombre());
@@ -145,10 +149,12 @@ public class FileComponent {
                 serializer.attribute("","hora", String.valueOf(receta.getHora()));
                 serializer.attribute("","minuto", String.valueOf(receta.getMinuto()));
                 serializer.attribute("","numero_dias", String.valueOf(semana.size()));
+
                 //Almaceno los dias de la semana
-                for(String dia: semana) {
+                for (int i = 0; i < semana.size(); ++i) {
                     serializer.startTag("","dia");
-                    serializer.attribute("","nombre", dia);
+                    serializer.attribute("","nombre", semana.get(i));
+                    serializer.attribute("","idAlarma",String.valueOf(idAlarmas.get(i)));
                     serializer.endTag("","dia");
                 }
                 serializer.endTag("","fechas");
