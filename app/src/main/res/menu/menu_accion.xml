@@ -12,6 +12,13 @@
     </item>
 
     <item
+        android:id="@+id/eliminador"
+        android:title="Eliminar"
+        android:icon="@drawable/ic_remove_white_24dp"
+        app:showAsAction="always">
+    </item>
+
+    <item
         android:id="@+id/mas_opciones"
         android:title="Opciones"
         android:icon="@drawable/ic_more_vert_white_24dp"

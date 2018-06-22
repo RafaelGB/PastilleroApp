@@ -125,6 +125,19 @@ public class EdicionActivity extends AppCompatActivity {
                 return true;
             }
 
+            case R.id.eliminador: {
+                View vista_edicion = LayoutInflater.from(this).inflate(R.layout.fila_medicamento, null);
+                int nhijos = tableLayout.getChildCount();
+                if (nhijos > 2) {
+                    View hijo = tableLayout.getChildAt(nhijos-1);
+                    tableLayout.removeViewAt(nhijos-1);
+                }
+
+               else Toast.makeText(getApplicationContext(),"No puedes eliminar el unico medicamento",Toast.LENGTH_SHORT).show();
+
+                return true;
+            }
+
             case R.id.guardar: {
                 getInformacionInterfaz();
 
@@ -196,6 +209,9 @@ public class EdicionActivity extends AppCompatActivity {
 
         hora = timePicker.getCurrentHour();
         minuto = timePicker.getCurrentMinute();
+
+        //En caso de no haber medicinas
+        if(cuenta < 2) return;
 
         onCheckboxClicked();
         receta_finalizada = true;
