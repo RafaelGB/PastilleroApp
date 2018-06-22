@@ -10,7 +10,12 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -22,6 +27,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private GoogleMap mMap;
     private LatLng myPosition;
+    private int PROXIMITY_RADIUS = 10000;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +86,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // Add a marker in Sydney and move the camera
                 mMap.addMarker(new MarkerOptions().position(myPosition).title("Farmacias cerca de ti"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+
+                negociosCercanos(latitude, longitude);
             }
         } else {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
@@ -121,4 +130,36 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
     }
+
+
+    private void negociosCercanos(double latitude, double longitude) {
+        String Farmacia = "pharmacy";
+        mMap.clear();
+        String url = getUrl(latitude, longitude, Farmacia);
+        Object dataTransfer[] = new Object[2];
+        dataTransfer[0] = mMap;
+        dataTransfer[1] = url;
+
+        GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
+        getNearbyPlacesData.execute(dataTransfer);
+
+        Toast.makeText(MapsActivity.this,"Farmacias Cercanas", Toast.LENGTH_LONG).show();
+    }
+
+
+    private String getUrl(double latitude, double longitude, String nearbyPlace) {
+
+        StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        googlePlacesUrl.append("location=" + latitude + "," + longitude);
+        googlePlacesUrl.append("&radius=" + PROXIMITY_RADIUS);
+        googlePlacesUrl.append("&type=" + nearbyPlace);
+        googlePlacesUrl.append("&keyword=" + "farmacia");
+        googlePlacesUrl.append("&sensor=true");
+        googlePlacesUrl.append("&key=" + "AIzaSyCIaEM_XYcxrukNtvUWC5ZIPnRo_lfos70");
+        Log.d("getUrl", googlePlacesUrl.toString());
+
+        return googlePlacesUrl.toString();
+    }
+
+
 }
